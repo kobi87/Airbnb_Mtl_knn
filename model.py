@@ -33,7 +33,7 @@ from sklearn.feature_selection import SelectFromModel
 
 #Defining the independent variables and dependent variables
 airbnb_en=montreal_listing.copy()
-x = airbnb_en.iloc[:,[1,2,8]]
+x = airbnb_en.iloc[:,[2,3,8]]
 
 # use log10 for the price for a good result
 #y = airbnb_en['price'].values
