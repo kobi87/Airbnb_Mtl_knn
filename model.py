@@ -4,47 +4,27 @@ import matplotlib.pyplot as plt
 import pickle
 
 # import the dataframe
-montreal_listing =pd.read_csv('montreal_airbnb.csv')
-
-# clean Data
-montreal_listing = montreal_listing.drop(['name','id','neighbourhood_group','host_name','last_review'], axis=1)
-montreal_listing.isnull().sum()
-montreal_listing.dropna(how='any',inplace=True)
-
-#creating a sub-dataframe with no extreme values / less than 400 
-sub_montreal_listing=montreal_listing[montreal_listing.price < 400]
-
-# Features Engineering
-feature_sub_montreal_listing = sub_montreal_listing.copy()
-feature_sub_montreal_listing.drop(['latitude','longitude'],axis=1,inplace=True)
-
-# Encoding categorical features (proposed 1)
-categorical_features=['room_type', 'neighbourhood']
-
-for feature in categorical_features:
-    labels_ordered=feature_sub_montreal_listing.groupby([feature])['price'].mean().sort_values().index
-    labels_ordered={k:i for i,k in enumerate(labels_ordered,0)}
-    feature_sub_montreal_listing[feature]=feature_sub_montreal_listing[feature].map(labels_ordered)
+montreal_listing =pd.read_csv('df_mtl_features_engineering.csv')
     
 # Feature Scaling¶
 # MinMaxScaler (proposed 1)
 # we use minmaxscaler because we haven't a negative value, however we use normalised scaler (as a général standerscaler)
 
-feature_scale=[feature for feature in feature_sub_montreal_listing.columns if feature not in ['host_id','price']]
+feature_scale=[feature for feature in montreal_listing.columns if feature not in ['host_id','price']]
 
 from sklearn.preprocessing import MinMaxScaler
 scaler=MinMaxScaler()
-scaler.fit(feature_sub_montreal_listing[feature_scale])
+scaler.fit(montreal_listing[feature_scale])
 
-scaler.transform(feature_sub_montreal_listing[feature_scale])
+scaler.transform(montreal_listing[feature_scale])
 
 # transform the data, and add on the host_id and price variables
-feature_sub_montreal_listing = pd.concat([feature_sub_montreal_listing[['host_id', 'price']].reset_index(drop=True), pd.DataFrame(scaler.transform(feature_sub_montreal_listing[feature_scale]), columns=feature_scale)], axis=1)
+montreal_listing = pd.concat([montreal_listing[['host_id', 'price']].reset_index(drop=True), pd.DataFrame(scaler.transform(montreal_listing[feature_scale]), columns=feature_scale)], axis=1)
 
 # Feature selection
 # Data filtering
 # Filter the dataset for prices between 0 and $120
-feature_sub_montreal_listing = feature_sub_montreal_listing.loc[(feature_sub_montreal_listing['price'] < 120)]
+montreal_listing = montreal_listing.loc[(montreal_listing['price'] < 120)]
 
 ## for feature slection
 
@@ -52,8 +32,8 @@ from sklearn.linear_model import Lasso
 from sklearn.feature_selection import SelectFromModel
 
 #Defining the independent variables and dependent variables
-airbnb_en=feature_sub_montreal_listing.copy()
-x = airbnb_en.iloc[:,[0,2,8]]
+airbnb_en=montreal_listing.copy()
+x = airbnb_en.iloc[:,[1,2,8]]
 
 # use log10 for the price for a good result
 #y = airbnb_en['price'].values
@@ -88,4 +68,4 @@ knn = KNeighborsRegressor(n_neighbors=5, algorithm='brute')  # création une ins
 knn.fit(x_train, y_train)
 
 # Saving model to disk
-pickle.dump(knn, open('model.pkl','wb')) 
+pickle.dump(knn, open('model.pkl','wb'))
