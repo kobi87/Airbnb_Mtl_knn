@@ -53,7 +53,7 @@ from sklearn.feature_selection import SelectFromModel
 
 #Defining the independent variables and dependent variables
 airbnb_en=feature_sub_montreal_listing.copy()
-x = airbnb_en.iloc[:,[0,2,3,4,5,7,8]]
+x = airbnb_en.iloc[:,[0,2,8]]
 
 # use log10 for the price for a good result
 #y = airbnb_en['price'].values
@@ -64,15 +64,15 @@ from sklearn.model_selection import train_test_split
 x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=.1,random_state=353)
 
 # to visualise al the columns in the dataframe
-pd.pandas.set_option('display.max_columns', None)
-feature_sel_model = SelectFromModel(Lasso(alpha=0.005, random_state=0)) # remember to set the seed, the random state in this function
-feature_sel_model.fit(x_train, y_train)
-feature_sel_model.get_support()
+#pd.pandas.set_option('display.max_columns', None)
+#feature_sel_model = SelectFromModel(Lasso(alpha=0.005, random_state=0)) # remember to set the seed, the random state in this function#
+#feature_sel_model.fit(x_train, y_train)
+#feature_sel_model.get_support()
 
 # this is how we can make a list of the selected features
-selected_feat = x_train.columns[(feature_sel_model.get_support())]
-x_train=x_train[selected_feat]
-x_test =x_test[selected_feat] 
+#selected_feat = x_train.columns[(feature_sel_model.get_support())]
+#x_train=x_train[selected_feat#
+#x_test =x_test[selected_feat] 
 
 # LR Prediction Model
 #from sklearn.linear_model import LogisticRegression
