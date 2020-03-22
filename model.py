@@ -86,7 +86,6 @@ from sklearn.neighbors import KNeighborsRegressor
 #Prepare a Linear Regression (knn) Model
 knn = KNeighborsRegressor(n_neighbors=5, algorithm='brute')  # création une instance 
 knn.fit(x_train, y_train)
-y_pred = knn.predict(x_test)
 
 # Saving model to disk
-pickle.dump(reg, open('model.pkl','wb')) 
+pickle.dump(knn, open('model.pkl','wb')) 
